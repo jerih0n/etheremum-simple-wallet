@@ -5,12 +5,16 @@ import Constants from '../storage/Constants';
 import { AES } from 'crypto-js';
 import Web3 from 'web3';
 import UrlBuilder from '../helpers/UrlBuilder';
+import { ethers } from 'ethers';
+import App from '../App';
+import { Wallet } from '@ethersproject/wallet';
 
-const ImportWallet = (networkConfig) => {
+const ImportWallet = ({networkConfig, recoveryMode}) => {
 
     const validateMnemonicPhrase = (mnemonicInput) => {
+        let isValidMnemonic = ethers.utils.isValidMnemonic(mnemonicInput);
         const mnemonicInputCount = mnemonicInput.split(' ').length;
-        return mnemonicInputCount == 12;
+        return mnemonicInputCount == 12 && isValidMnemonic;
     }
 
     const validatePassword = (password, confirmedPassword) => {
@@ -22,33 +26,32 @@ const ImportWallet = (networkConfig) => {
 
     const [password, setPassword] = useState({
         password:null,
-        consfimedPassowrd:null
+        consfirmPassowrd:null
     });
 
     const generatePrivateKey = () => {
         const httpNetwork = UrlBuilder.builProviderUrl(networkConfig.Url, networkConfig.Port)
         const web3 = new Web3(new Web3.providers.HttpProvider(httpNetwork));
-        const account = web3.eth.accounts.create();
-        const privateKey = account.privateKey;
+        const wallet = Wallet.fromMnemonic(mnenonic);
+        const privateKey = wallet.privateKey;
         return privateKey;
     }
-
     const onMnemonicSubmit = (event) => {
         event.preventDefault();
         if(validateMnemonicPhrase(mnenonic)) {
-            if(!validatePassword(password.password, password.consfimedPassowrd)) {
+            if(!validatePassword(password.password, password.consfirmPassowrd)) {
                 alert("passwords do not match");
                 return;
-            }
+            }           
             const privateKey = generatePrivateKey(mnenonic);
-
+            console.log("private key is - " + privateKey)
             const cookieManager = new Cookies();
             
             cookieManager.set(Constants.PRIVATE_KEY_COCKIE_NAME,privateKey,{expires:new Date(Date.now()+2592000)});
 
-            return;
+            return <App></App>
         }
-        alert("Mnemonic must be 12 words")
+        alert("Invalid Mnemonic")
     }
 
     const onMnemonicChange = (e) => {
@@ -68,14 +71,14 @@ const ImportWallet = (networkConfig) => {
                     <div className="row">
                         <input type="password" className="form-control"  onChange={(e) => setPassword({
                             password: e.target.value,
-                            consfimedPassowrd: password.consfimedPassowrd
+                            consfirmPassowrd: password.consfimedPassowrd
                         })}></input>
                     </div> 
                     <label className="form-label">Confirm Password</label>
                     <div className="row">
                     <input type="password" className="form-control"  onChange={(e) => setPassword({
                             password: password.password,
-                            consfimedPassowrd: e.target.value
+                            consfirmPassowrd: e.target.value
                         })}></input>
                     </div>     
                     <input type="submit" value="Submit" className="btn btn-primary" style={{margin:20}}></input>           

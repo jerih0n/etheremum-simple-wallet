@@ -45,23 +45,22 @@ function App() {
       ></WalletManager>
     }else {
       return (
-        <ImportWallet networkConfig={{defaultNetworkConfig}}></ImportWallet>
+        <ImportWallet networkConfig={defaultNetworkConfig} recoveryMode={false}></ImportWallet>
       )
     }
   }
   return (
-    <div className="container">    
-      <Router>  
-        <div className="container-fluid">
-            <h1>This is simple ethereum wallet. For Deloveloping Purposes only. Please do not use it with main ethereum net</h1>
-            <h3>Please Chose an Option</h3>
+  <div className="container">          
+      <div className="container-fluid">
+        <div style={{margin:50}}>
+          This is simple ethereum wallet. For Deloveloping Purposes only. Please do not use it with main ethereum net
+          Please Chose an Option
         </div>
-          <Switch>
-            {renderMenu()}
-          </Switch>
-      </Router>
-      <NetworkData network={defaultNetworkConfig}/>
-    </div>
+      </div>
+      {renderMenu()}  
+             
+    <NetworkData network={defaultNetworkConfig}/>
+  </div>
    
   );
 }
