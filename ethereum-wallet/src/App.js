@@ -5,14 +5,18 @@ import ImportWallet from "./components/ImportWallet"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom"
 import NetworkHelper from "../src/storage/NetworksHelper"
-import { useCookies } from 'react-cookie';
+import { Cookies } from 'react-cookie';
 import { useState, useEffect } from 'react'
 import NetworkData from "./components/NetworkData"
+import Constants from "./storage/Constants"
+import WalletManager from "./components/WalletManager"
+
 
 function App() {
 
 
   const[defaultNetworkConfig,setConfig] = useState({});
+  const[privateKey, setPrivateKeyFromCoockie] = useState('')
 
   useEffect(()=> {
     const defaultConfig =  NetworkHelper.getDefaultNetwork();
@@ -23,16 +27,33 @@ function App() {
     console.log(defaultNetworkConfig);
   },[defaultNetworkConfig])
 
+ 
+  useEffect(() => {
+    const coockieManager = new Cookies();
+    const privateKeyEncrypted = coockieManager.get(Constants.PRIVATE_KEY_COCKIE_NAME)
+    if(privateKeyEncrypted) {
+      setPrivateKeyFromCoockie(privateKeyEncrypted);
+    }
+  },[])
+
+  const renderMenu = () => {
+    if(privateKey) {
+      return <WalletManager networkConfiguration={{defaultNetworkConfig}} encryptedPrivateKey={privateKey}></WalletManager>
+    }else {
+      return (
+        <ImportWallet></ImportWallet>
+      )
+    }
+  }
   return (
     <div className="container">    
-      <Router>
+      <Router>  
+        <div className="container-fluid">
+            <h1>This is simple ethereum wallet. For Deloveloping Purposes only. Please do not use it with main ethereum net</h1>
+            <h3>Please Chose an Option</h3>
+        </div>
           <Switch>
-          <Route path="/import-wallet">
-              <ImportWallet></ImportWallet>
-          </Route>
-          <Route>
-              <Main></Main>
-            </Route>            
+            {renderMenu()}
           </Switch>
       </Router>
       <NetworkData network={defaultNetworkConfig}/>
