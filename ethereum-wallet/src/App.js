@@ -16,7 +16,7 @@ function App() {
 
 
   const[defaultNetworkConfig,setConfig] = useState({});
-  const[privateKey, setPrivateKeyFromCoockie] = useState('')
+  const[privateKey, setPrivateKeyFromCoockie] = useState(null)
 
   useEffect(()=> {
     const defaultConfig =  NetworkHelper.getDefaultNetwork();
@@ -38,10 +38,14 @@ function App() {
 
   const renderMenu = () => {
     if(privateKey) {
-      return <WalletManager networkConfiguration={{defaultNetworkConfig}} encryptedPrivateKey={privateKey}></WalletManager>
+      return <WalletManager 
+      url={defaultNetworkConfig.Url} 
+      encryptedPrivateKey={privateKey}
+      port={defaultNetworkConfig.Port}
+      ></WalletManager>
     }else {
       return (
-        <ImportWallet></ImportWallet>
+        <ImportWallet networkConfig={{defaultNetworkConfig}}></ImportWallet>
       )
     }
   }

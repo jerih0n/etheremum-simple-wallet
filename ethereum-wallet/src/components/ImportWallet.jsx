@@ -1,11 +1,12 @@
-
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { useState, useEffect } from 'react'
 import Cookies from 'universal-cookie';
 import Constants from '../storage/Constants';
+import { AES } from 'crypto-js';
+import Web3 from 'web3';
+import UrlBuilder from '../helpers/UrlBuilder';
 
-const ImportWallet = () => {
+const ImportWallet = (networkConfig) => {
 
     const validateMnemonicPhrase = (mnemonicInput) => {
         const mnemonicInputCount = mnemonicInput.split(' ').length;
@@ -24,7 +25,14 @@ const ImportWallet = () => {
         consfimedPassowrd:null
     });
 
-    
+    const generatePrivateKey = () => {
+        const httpNetwork = UrlBuilder.builProviderUrl(networkConfig.Url, networkConfig.Port)
+        const web3 = new Web3(new Web3.providers.HttpProvider(httpNetwork));
+        const account = web3.eth.accounts.create();
+        const privateKey = account.privateKey;
+        return privateKey;
+    }
+
     const onMnemonicSubmit = (event) => {
         event.preventDefault();
         if(validateMnemonicPhrase(mnenonic)) {
@@ -32,9 +40,12 @@ const ImportWallet = () => {
                 alert("passwords do not match");
                 return;
             }
-            const cookieManager = new Cookies();
+            const privateKey = generatePrivateKey(mnenonic);
 
-            cookieManager.set(Constants.PRIVATE_KEY_COCKIE_NAME,mnenonic,{expires:new Date(Date.now()+2592000)});
+            const cookieManager = new Cookies();
+            
+            cookieManager.set(Constants.PRIVATE_KEY_COCKIE_NAME,privateKey,{expires:new Date(Date.now()+2592000)});
+
             return;
         }
         alert("Mnemonic must be 12 words")
