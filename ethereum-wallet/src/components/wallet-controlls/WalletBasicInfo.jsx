@@ -2,31 +2,36 @@ import { useState, useEffect } from "react"
 import Web3 from "web3";
 import { ethers } from "ethers";
 import { Wallet } from "@ethersproject/wallet";
+import WalletTransactions from './WalletTransactions';
+
 const WalletBasicInfo = ({web3,account}) => {
     const a = () => {
         const wallet = new Wallet();
         wallet.getAddress()
     }
-    const[balance, setBalance] = useState(null);
+    const[balance, setBalance] = useState(0);
     
     useEffect(() => {
         web3.eth.getBalance(account.address)
          .then(result => {
-            setBalance(web3.utils.fromWei(result, 'ether'));
+            setBalance(result);
          });
        },[balance])
 
-
+    
     return (
         <div className="container">
-        <div className="row">
-            <div className="col">
-                Address: <b>{account.address}</b>
+            <div className="row">
+                <div className="col">
+                    Address: <b>{account.address}</b>
+                </div>
+                <div className="col">
+                    Balance: <b>{web3.utils.fromWei(balance.toString(), 'ether')} ETH </b>
+                </div>
             </div>
-            <div className="col">
-                Balance: <b>{balance} ETH </b>
+            <div className="row" style={{"margin-top":"7%"}}>
+                <WalletTransactions account={account} web3={web3} balance={balance}></WalletTransactions>
             </div>
-        </div>
     </div>
     )
 
