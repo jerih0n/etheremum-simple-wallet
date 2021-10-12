@@ -5,9 +5,11 @@ import { AES } from "crypto-js";
 import { ethers } from "ethers";
 import {Wallet} from 'ethers'
 import WalletBasicInfo from "./wallet-controlls/WalletBasicInfo";
-
+import { useHistory } from "react-router";
 
 const WalletManager = ({url,port,encryptedPrivateKey}) => {
+
+    const history = useHistory();
 
     const loadWeb3FromConfig = () => {
         const connection = UrlBuilder.builProviderUrl(url, port);
@@ -22,15 +24,21 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
    const onPassowordSubmit = (event) => {
         event.preventDefault();
         try {
-            const decryptedPriviteKey = AES.decrypt(encryptedPrivateKey, `${password}`).toString();
-            const account = new Wallet(decryptedPriviteKey);
-            alert(account.address());
+            const createdAccount = new Wallet(encryptedPrivateKey);
+            setAccount(createdAccount);
         }catch(error) {
             console.log(error);
         }           
    }
-    return(
-        <div className="container-fluid">
+   const renderOnAccountCreation = () => {
+       if(account != null) {
+           return(
+               <div className="container-fluid">
+                   <WalletBasicInfo web3={web3} account={account}></WalletBasicInfo>
+               </div>
+           )
+       }
+       return (
             <form onSubmit={onPassowordSubmit}>
                 <div className="row">
                     <label htmlFor={password} className="form-label">Enter Password</label>
@@ -40,7 +48,13 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
                     <input type="submit" value="Submit" className="btn btn-primary" style={{margin:20}}></input>  
                 </div>
             </form>
+       )
+   }
+    return(
+        <div className="container-fluid">
+           {renderOnAccountCreation()}
         </div>
+        
     )
 }
 

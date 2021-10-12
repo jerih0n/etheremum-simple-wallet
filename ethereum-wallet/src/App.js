@@ -3,7 +3,7 @@ import './App.css';
 import Main from "./components/Main"
 import ImportWallet from "./components/ImportWallet"
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { useHistory } from 'react-router-dom';
 import NetworkHelper from "../src/storage/NetworksHelper"
 import { Cookies } from 'react-cookie';
 import { useState, useEffect } from 'react'
@@ -12,10 +12,11 @@ import Constants from "./storage/Constants"
 import WalletManager from "./components/WalletManager"
 import {BrowserRouter  as Router, Route, Switch, Redirect } from 'react-router-dom';
 import CreateWallet from './components/CreateWallet';
-
+import WalletBasicInfo from './components/wallet-controlls/WalletBasicInfo';
 
 function App() {
 
+  const history = useHistory()
 
   const[defaultNetworkConfig,setConfig] = useState({});
   const[privateKey, setPrivateKeyFromCoockie] = useState(null)
@@ -63,7 +64,7 @@ function App() {
           Please Chose an Option
         </div>
       </div>
-      <Router>
+      <Router history={history}>
           <Switch>         
             <Route path="/create-wallet">
                 <CreateWallet networkConfig={defaultNetworkConfig} ></CreateWallet>
@@ -74,6 +75,7 @@ function App() {
             <Route path='/wallet-manager'>
                 
             </Route>
+            <Route path='/wallet-basic-info' component={WalletBasicInfo}></Route>
             <Route path="/">
                 {RenderRedirect()}
             </Route>

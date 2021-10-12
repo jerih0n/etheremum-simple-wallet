@@ -8,11 +8,11 @@ import UrlBuilder from '../helpers/UrlBuilder';
 import { ethers } from 'ethers';
 import { Wallet } from '@ethersproject/wallet';
 import CookieHelper from "../helpers/CookieHelper";
-import { Redirect, Route } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import Main from "../components/Main"
 
 const ImportWallet = ({networkConfig}) => {
-
+    const history = useHistory();
     const validateMnemonicPhrase = (mnemonicInput) => {
         let isValidMnemonic = ethers.utils.isValidMnemonic(mnemonicInput);
         const mnemonicInputCount = mnemonicInput.split(' ').length;
@@ -44,10 +44,12 @@ const ImportWallet = ({networkConfig}) => {
                 return;
             }           
             const privateKey = generatePrivateKey(mnenonic);
-            const enctrypedPrivateKey = AES.encrypt(privateKey, `${password}`).toString();
-            CookieHelper.setCoockie(Constants.PRIVATE_KEY_COCKIE_NAME,enctrypedPrivateKey,new Date(Date.now()+100000000000000))
+            //console.log("private key " + privateKey + "incrypted with " + `${password.password}`);           
+            //const enctrypedPrivateKey = AES.encrypt(`${privateKey}`, `${password.password}`).toString();
+            //console.log("enctrypedPrivateKey key" + enctrypedPrivateKey + "encrypted by " + `${password.password}`);
+            CookieHelper.setCoockie(Constants.PRIVATE_KEY_COCKIE_NAME,privateKey,new Date(Date.now()+100000000000000))
 
-            return <Main networkConfig={networkConfig}></Main>
+            return history.push("/main")
         }
         alert("Invalid Mnemonic")
     }
