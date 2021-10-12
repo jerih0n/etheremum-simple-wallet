@@ -3,13 +3,15 @@ import './App.css';
 import Main from "./components/Main"
 import ImportWallet from "./components/ImportWallet"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom"
+
 import NetworkHelper from "../src/storage/NetworksHelper"
 import { Cookies } from 'react-cookie';
 import { useState, useEffect } from 'react'
 import NetworkData from "./components/NetworkData"
 import Constants from "./storage/Constants"
 import WalletManager from "./components/WalletManager"
+import {BrowserRouter  as Router, Route, Switch, Redirect } from 'react-router-dom';
+import CreateWallet from './components/CreateWallet';
 
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
 
   const[defaultNetworkConfig,setConfig] = useState({});
   const[privateKey, setPrivateKeyFromCoockie] = useState(null)
+  const[isPrivateKeyPresent, setIsPrivateKeyPresent] = useState(false)
 
   useEffect(()=> {
     const defaultConfig =  NetworkHelper.getDefaultNetwork();
@@ -27,28 +30,31 @@ function App() {
     console.log(defaultNetworkConfig);
   },[defaultNetworkConfig])
 
- 
+  const RenderRedirect =() => {
+    if(isPrivateKeyPresent) {
+      console.log("private key preset " + isPrivateKeyPresent)
+
+      return <WalletManager 
+      url={defaultNetworkConfig.Url} 
+      encryptedPrivateKey={privateKey}
+      port={defaultNetworkConfig.Port}
+></WalletManager>
+    }
+    return  <Main networkConfig={defaultNetworkConfig}></Main>
+  }
   useEffect(() => {
     const coockieManager = new Cookies();
     const privateKeyEncrypted = coockieManager.get(Constants.PRIVATE_KEY_COCKIE_NAME)
     if(privateKeyEncrypted) {
       setPrivateKeyFromCoockie(privateKeyEncrypted);
+      setIsPrivateKeyPresent(true);
+      console.log("called oneces " + isPrivateKeyPresent)
+      return;
     }
-  },[])
+    console.log("called outside use effect " + isPrivateKeyPresent)
+    setIsPrivateKeyPresent(false);
+  })
 
-  const renderMenu = () => {
-    if(privateKey) {
-      return <WalletManager 
-      url={defaultNetworkConfig.Url} 
-      encryptedPrivateKey={privateKey}
-      port={defaultNetworkConfig.Port}
-      ></WalletManager>
-    }else {
-      return (
-        <ImportWallet networkConfig={defaultNetworkConfig} recoveryMode={false}></ImportWallet>
-      )
-    }
-  }
   return (
   <div className="container">          
       <div className="container-fluid">
@@ -57,8 +63,22 @@ function App() {
           Please Chose an Option
         </div>
       </div>
-      {renderMenu()}  
-             
+      <Router>
+          <Switch>         
+            <Route path="/create-wallet">
+                <CreateWallet networkConfig={defaultNetworkConfig} ></CreateWallet>
+            </Route>
+            <Route path="/import-wallet">
+                <ImportWallet networkConfig={defaultNetworkConfig}></ImportWallet>
+            </Route>
+            <Route path='/wallet-manager'>
+                
+            </Route>
+            <Route path="/">
+                {RenderRedirect()}
+            </Route>
+          </Switch>
+      </Router>     
     <NetworkData network={defaultNetworkConfig}/>
   </div>
    

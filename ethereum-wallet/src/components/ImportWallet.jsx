@@ -6,10 +6,12 @@ import { AES } from 'crypto-js';
 import Web3 from 'web3';
 import UrlBuilder from '../helpers/UrlBuilder';
 import { ethers } from 'ethers';
-import App from '../App';
 import { Wallet } from '@ethersproject/wallet';
+import CookieHelper from "../helpers/CookieHelper";
+import { Redirect, Route } from 'react-router';
+import Main from "../components/Main"
 
-const ImportWallet = ({networkConfig, recoveryMode}) => {
+const ImportWallet = ({networkConfig}) => {
 
     const validateMnemonicPhrase = (mnemonicInput) => {
         let isValidMnemonic = ethers.utils.isValidMnemonic(mnemonicInput);
@@ -18,8 +20,6 @@ const ImportWallet = ({networkConfig, recoveryMode}) => {
     }
 
     const validatePassword = (password, confirmedPassword) => {
-        console.log(password);
-        console.log(confirmedPassword)
         return password == confirmedPassword;
     }
     const [mnenonic, setMnemonic] = useState('')
@@ -44,12 +44,10 @@ const ImportWallet = ({networkConfig, recoveryMode}) => {
                 return;
             }           
             const privateKey = generatePrivateKey(mnenonic);
-            console.log("private key is - " + privateKey)
-            const cookieManager = new Cookies();
-            
-            cookieManager.set(Constants.PRIVATE_KEY_COCKIE_NAME,privateKey,{expires:new Date(Date.now()+2592000)});
+            const enctrypedPrivateKey = AES.encrypt(privateKey, `${password}`).toString();
+            CookieHelper.setCoockie(Constants.PRIVATE_KEY_COCKIE_NAME,enctrypedPrivateKey,new Date(Date.now()+100000000000000))
 
-            return <App></App>
+            return <Main networkConfig={networkConfig}></Main>
         }
         alert("Invalid Mnemonic")
     }
@@ -87,9 +85,6 @@ const ImportWallet = ({networkConfig, recoveryMode}) => {
          </div>       
     </div>
     )
-
-
-    
 }
 
 export default ImportWallet
