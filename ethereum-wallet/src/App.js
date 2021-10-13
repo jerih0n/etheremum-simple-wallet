@@ -1,11 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
 import Main from "./components/Main"
 import ImportWallet from "./components/wallet-creation/ImportWallet"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useHistory } from 'react-router-dom';
 import NetworkHelper from "../src/storage/NetworksHelper"
-import { Cookies } from 'react-cookie';
 import { useState, useEffect } from 'react'
 import NetworkData from "./components/NetworkData"
 import Constants from './storage/Constants'

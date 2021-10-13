@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react"
 import Web3 from "web3";
 import UrlBuilder from "../../helpers/UrlBuilder";
-import { AES } from "crypto-js";
-import { ethers } from "ethers";
 import {Wallet} from 'ethers'
 import WalletBasicInfo from "./WalletBasicInfo";
 import { useHistory } from "react-router";
@@ -45,7 +43,7 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
             if(removeDataAsWell) {
                 LocalStorageHelper.removeItemFromStorage(LocalStorageHelper.createLocalStorageKey(Constants.LOCAL_STORAGE_TRANSACTION_HISTORY,account.address));
             }
-            return history.push("/main");
+            return history.goBack();
         }
    }
 
@@ -84,8 +82,7 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
     return(
         <div className="container-fluid">
            {renderOnAccountCreation()}
-        </div>
-        
+        </div>  
     )
 }
 

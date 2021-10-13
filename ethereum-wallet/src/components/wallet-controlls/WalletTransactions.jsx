@@ -1,7 +1,5 @@
-import Web3 from "web3"
+
 import { useState, useEffect } from "react"
-import { ethers } from "ethers";
-import { Wallet } from "@ethersproject/wallet";
 import Constants from "../../storage/Constants"
 import LocalStorageHelper from "../../storage/LocalStorageHelper";
 
@@ -14,7 +12,7 @@ const WalletTransactions = ({account, web3, balance}) => {
     const [sendAmount, setSendAmount] = useState(null);
     const [transactionHash,setTransactionHash] = useState(null);
     const [transactionEstimatedGass, setEstimatedGassForTrnasaction] = useState(0);
-    const [sendAmountInWei,setSendAmountInWei] = useState(0);
+    const [sendAmountInWei,setSendAmountInWei] = useState(null);
     const [allTransactions, setAllTransactions] = useState([]);
 
     
@@ -37,7 +35,7 @@ const WalletTransactions = ({account, web3, balance}) => {
            setTransactionHash(transactionHash);
         }
     }
-
+   
     const recordInLocalStrorage = (sendAmountInWei,transactionHash,transactionEstimatedGass) => {
         if(LocalStorageHelper.getItemFromLocalStorage(localStorageName) == null) {
             LocalStorageHelper.addToLocalStorage(localStorageName,[]);
@@ -124,9 +122,11 @@ const WalletTransactions = ({account, web3, balance}) => {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleFormControlInput1" className="form-label">Amount in EHT</label>
-                    <input type="input" class="form-control" onChange={(e) => {
-                        setSendAmount(e.target.value);
-                        setSendAmountInWei(web3.utils.toWei(e.target.value.toString(),'ether'))
+                    <input type="number" class="form-control" onChange={(e) => {
+                        setSendAmount(`${e.target.value}`);
+                        if(e.target.value != '' && e.target.value != null) {
+                            setSendAmountInWei(web3.utils.toWei(e.target.value.toString(),'ether'))
+                        }
                     }} />
                 </div>
                 <div className="mb-3">

@@ -1,18 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState, useEffect } from 'react'
-import Cookies from 'universal-cookie';
 import Constants from '../../storage/Constants';
-import { AES } from 'crypto-js';
-import Web3 from 'web3';
-import UrlBuilder from '../../helpers/UrlBuilder';
 import { ethers } from 'ethers';
 import { Wallet } from '@ethersproject/wallet';
 import CookieHelper from "../../helpers/CookieHelper";
 import { useHistory } from 'react-router-dom';
-import Main from "../Main"
 
-const ImportWallet = ({networkConfig}) => {
+const ImportWallet = ({networkConfig,fromMnemonic}) => {
     const history = useHistory();
+
     const validateMnemonicPhrase = (mnemonicInput) => {
         let isValidMnemonic = ethers.utils.isValidMnemonic(mnemonicInput);
         const mnemonicInputCount = mnemonicInput.split(' ').length;
@@ -22,7 +18,7 @@ const ImportWallet = ({networkConfig}) => {
     const validatePassword = (password, confirmedPassword) => {
         return password == confirmedPassword;
     }
-    const [mnenonic, setMnemonic] = useState('')
+    const [recovery, setRecovery] = useState('')
 
     const [password, setPassword] = useState({
         password:null,
@@ -30,42 +26,64 @@ const ImportWallet = ({networkConfig}) => {
     });
 
     const generatePrivateKey = () => {
-        const httpNetwork = UrlBuilder.builProviderUrl(networkConfig.Url, networkConfig.Port)
-        const web3 = new Web3(new Web3.providers.HttpProvider(httpNetwork));
-        const wallet = Wallet.fromMnemonic(mnenonic);
+        const wallet = Wallet.fromMnemonic(recovery);
         const privateKey = wallet.privateKey;
         return privateKey;
     }
-    const onMnemonicSubmit = (event) => {
+    const onFormSubmit = (event) => {
         event.preventDefault();
-        if(validateMnemonicPhrase(mnenonic)) {
-            if(!validatePassword(password.password, password.consfirmPassowrd)) {
-                alert("passwords do not match");
-                return;
-            }           
-            const privateKey = generatePrivateKey(mnenonic);
-            //console.log("private key " + privateKey + "incrypted with " + `${password.password}`);           
-            //const enctrypedPrivateKey = AES.encrypt(`${privateKey}`, `${password.password}`).toString();
-            //console.log("enctrypedPrivateKey key" + enctrypedPrivateKey + "encrypted by " + `${password.password}`);
-            CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,privateKey,new Date(Date.now()+100000000000000))
-
-            return history.push("/main")
+        let privateKey ="";
+        if(fromMnemonic) {
+            privateKey = recoverFromMnemonic();
+        }else {
+            privateKey = recoveFromPrivateKey();
         }
-        alert("Invalid Mnemonic")
+        CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,privateKey,new Date(Date.now()+100000000000000))
+        return history.push("/")
+
     }
 
-    const onMnemonicChange = (e) => {
-        setMnemonic(e.target.value);
+    const recoverFromMnemonic =() => {
+        if(validateMnemonicPhrase(recovery)) {
+            if(!validatePassword(password.password, password.consfirmPassowrd)) {
+                alert("passwords do not match");
+                return history.push("/");
+            }           
+            const privateKey = generatePrivateKey(recovery);
+            return privateKey;
+        }
+        alert("Invalid Mnemonic")
+        
+    }
+
+    const recoveFromPrivateKey = () => {
+        if(!validatePassword(password.password, password.consfirmPassowrd)) {
+            alert("passwords do not match");
+            return history.push("/");            
+        }    
+        let privateKey = recovery.toLowerCase();
+        console.log(privateKey);
+        if(!privateKey.startsWith('0x')) {
+            privateKey = `0x${recovery}`;
+        }
+        try {
+            console.log(privateKey);
+            let recoveryWallet = new Wallet(privateKey);
+            return recoveryWallet.privateKey;
+        }catch(error) {
+            alert("Ivalid Private Key")
+        }
+        
     }
     return(
     <div className="container-fluid">
         <h1>Import Wallet</h1>
         <div>
             <div className="row">
-                <form onSubmit={onMnemonicSubmit}>
-                    <label className="form-label">Mnemonic</label>
+                <form onSubmit={onFormSubmit}>
+                    <label className="form-label">{fromMnemonic? "Mnemonic":"Private Key"}</label>
                     <div className="row">
-                        <input type="password" className="form-control"  onChange={(e) => onMnemonicChange(e)}></input>
+                        <input type="password" className="form-control"  onChange={(e) => setRecovery(e.target.value)}></input>
                     </div> 
                     <label className="form-label">Password</label>
                     <div className="row">

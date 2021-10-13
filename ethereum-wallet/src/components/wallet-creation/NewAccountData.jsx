@@ -27,7 +27,7 @@ const NewAccountData = ({mnemonic,privateKey}) => {
     const onContinueClick = () => {
         const alertAnswer = window.confirm("Please check again that you have saved your recovery phrase or private key! If you not, you will not be able to recovere your wallet");
         if(alertAnswer) {
-            return history.push('/main')
+            return history.push('/')
         }
     }
 
