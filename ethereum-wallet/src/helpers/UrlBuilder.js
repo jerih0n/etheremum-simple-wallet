@@ -1,6 +1,6 @@
-const UrlBuilder =  {
+const UrlBuilder = {
 
-    builProviderUrl : function(url, port) {
+    builProviderUrl: function (url, port) {
         const httpNetwork = `${url}:${port}`;
         return httpNetwork;
     }

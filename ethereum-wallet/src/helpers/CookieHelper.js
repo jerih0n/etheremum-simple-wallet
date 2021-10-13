@@ -2,19 +2,19 @@
 import Cookies from "universal-cookie"
 
 const CookieHelper = {
-     
-    
-    setCoockie: function(key, value, expirationTime) {
+
+
+    setCoockie: function (key, value, expirationTime) {
         const coockieHelper = new Cookies();
-        coockieHelper.set(key, value, { expires:expirationTime})
+        coockieHelper.set(key, value, { expires: expirationTime })
     },
 
-    getCoockie: function(key) {
+    getCoockie: function (key) {
         const coockieHelper = new Cookies();
-        return  coockieHelper.get(key);
+        return coockieHelper.get(key);
     },
 
-    removeCoockie: function(key) {
+    removeCoockie: function (key) {
         const coockieHelper = new Cookies();
         coockieHelper.remove(key);
     }

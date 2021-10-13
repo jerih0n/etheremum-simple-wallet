@@ -1,10 +1,10 @@
 {
-    "Newtworks" :[
+    "Newtworks": [
         {
             "Url": "HTTP://127.0.0.1",
-            "Port":8545,
-            "ChainId":1337,
-            "Name":"localhost",
+            "Port": 8545,
+            "ChainId": 1337,
+            "Name": "localhost",
             "IsDefault": true
         }
     ]

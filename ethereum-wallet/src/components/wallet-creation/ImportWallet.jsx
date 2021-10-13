@@ -7,7 +7,7 @@ import CookieHelper from "../../helpers/CookieHelper";
 import { useHistory } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import CryptographyHelper from '../../helpers/CryptographyHelper';
-const ImportWallet = ({networkConfig,fromMnemonic}) => {
+const ImportWallet = ({ networkConfig, fromMnemonic }) => {
     const history = useHistory();
 
     const validateMnemonicPhrase = (mnemonicInput) => {
@@ -22,8 +22,8 @@ const ImportWallet = ({networkConfig,fromMnemonic}) => {
     const [recovery, setRecovery] = useState('')
 
     const [password, setPassword] = useState({
-        password:null,
-        consfirmPassowrd:null
+        password: null,
+        consfirmPassowrd: null
     });
 
     const generatePrivateKey = () => {
@@ -33,79 +33,79 @@ const ImportWallet = ({networkConfig,fromMnemonic}) => {
     }
     const onFormSubmit = (event) => {
         event.preventDefault();
-        let privateKey ="";
-        if(fromMnemonic) {
+        let privateKey = "";
+        if (fromMnemonic) {
             privateKey = recoverFromMnemonic();
-        }else {
+        } else {
             privateKey = recoveFromPrivateKey();
         }
-        const encryptedPK = CryptographyHelper.encryptPrivateKey(privateKey,password.password)
-        CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,encryptedPK,new Date(Date.now()+100000000000000))
-        window.location.href='/'
+        const encryptedPK = CryptographyHelper.encryptPrivateKey(privateKey, password.password)
+        CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME, encryptedPK, new Date(Date.now() + 100000000000000))
+        window.location.href = '/'
 
     }
 
-    const recoverFromMnemonic =() => {
-        if(validateMnemonicPhrase(recovery)) {
-            if(!validatePassword(password.password, password.consfirmPassowrd)) {
+    const recoverFromMnemonic = () => {
+        if (validateMnemonicPhrase(recovery)) {
+            if (!validatePassword(password.password, password.consfirmPassowrd)) {
                 alert("passwords do not match");
                 return history.push("/");
-            }           
+            }
             const privateKey = generatePrivateKey(recovery);
             return privateKey;
         }
         alert("Invalid Mnemonic")
-        
+
     }
 
     const recoveFromPrivateKey = () => {
-        if(!validatePassword(password.password, password.consfirmPassowrd)) {
+        if (!validatePassword(password.password, password.consfirmPassowrd)) {
             alert("passwords do not match");
-            return <Redirect to='/'></Redirect>           
-        }    
+            return <Redirect to='/'></Redirect>
+        }
         let privateKey = recovery.toLowerCase();
         console.log(privateKey);
-        if(!privateKey.startsWith('0x')) {
+        if (!privateKey.startsWith('0x')) {
             privateKey = `0x${recovery}`;
         }
         try {
             console.log(privateKey);
             let recoveryWallet = new Wallet(privateKey);
             return recoveryWallet.privateKey;
-        }catch(error) {
+        } catch (error) {
             alert("Ivalid Private Key")
         }
-        
+
     }
-    return(
-    <div className="container-fluid">
-        <h1>Import Wallet</h1>
-        <div>
-            <div className="row">
-                <form onSubmit={onFormSubmit}>
-                    <label className="form-label">{fromMnemonic? "Mnemonic":"Private Key"}</label>
-                    <div className="row">
-                        <input type="password" className="form-control"  onChange={(e) => setRecovery(e.target.value)}></input>
-                    </div> 
-                    <label className="form-label">Password</label>
-                    <div className="row">
-                        <input type="password" className="form-control"  onChange={(e) => setPassword({
-                            password: e.target.value,
-                            consfirmPassowrd: password.consfimedPassowrd
-                        })}></input>
-                    </div> 
-                    <label className="form-label">Confirm Password</label>
-                    <div className="row">
-                    <input type="password" className="form-control"  onChange={(e) => setPassword({
-                            password: password.password,
-                            consfirmPassowrd: e.target.value
-                        })}></input>
-                    </div>     
-                    <input type="submit" value="Submit" className="btn btn-primary" style={{margin:20}}></input>           
-                </form>
+    return (
+        <div className="container-fluid">
+            <h1>Import Wallet</h1>
+            <div>
+                <div className="row">
+                    <form onSubmit={onFormSubmit}>
+                        <label className="form-label">{fromMnemonic ? "Mnemonic" : "Private Key"}</label>
+                        <div className="row">
+                            <input type="password" className="form-control" onChange={(e) => setRecovery(e.target.value)}></input>
+                        </div>
+                        <label className="form-label">Password</label>
+                        <div className="row">
+                            <input type="password" className="form-control" onChange={(e) => setPassword({
+                                password: e.target.value,
+                                consfirmPassowrd: password.consfimedPassowrd
+                            })}></input>
+                        </div>
+                        <label className="form-label">Confirm Password</label>
+                        <div className="row">
+                            <input type="password" className="form-control" onChange={(e) => setPassword({
+                                password: password.password,
+                                consfirmPassowrd: e.target.value
+                            })}></input>
+                        </div>
+                        <input type="submit" value="Submit" className="btn btn-primary" style={{ margin: 20 }}></input>
+                    </form>
+                </div>
             </div>
-         </div>       
-    </div>
+        </div>
     )
 }
 

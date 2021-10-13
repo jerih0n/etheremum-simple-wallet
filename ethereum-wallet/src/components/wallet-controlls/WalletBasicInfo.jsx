@@ -1,27 +1,27 @@
 import { useState, useEffect } from "react"
 import WalletTransactions from './WalletTransactions';
 
-const WalletBasicInfo = ({web3,account}) => {
+const WalletBasicInfo = ({ web3, account }) => {
 
-    const[balance, setBalance] = useState(0);
-    
+    const [balance, setBalance] = useState(0);
+
     useEffect(() => {
         web3.eth.getBalance(account.address)
-         .then(result => {
-            setBalance(result);
-         });
-       },[])
+            .then(result => {
+                setBalance(result);
+            });
+    }, [])
 
     const balanceChangeHandler = () => {
         web3.eth.getBalance(account.address)
-         .then(result => {
-            setBalance(result);
-         });
+            .then(result => {
+                setBalance(result);
+            });
     }
 
     return (
-        <div className="container" style={{marginTop:"3%"}}>
-            <div className="row" style={{fontSize:"20px;"}}>
+        <div className="container" style={{ marginTop: "3%" }}>
+            <div className="row" style={{ fontSize: "20px;" }}>
                 <div className="col">
                     Address: <b>{account.address}</b>
                 </div>
@@ -29,10 +29,10 @@ const WalletBasicInfo = ({web3,account}) => {
                     Balance: <b>{web3.utils.fromWei(balance.toString(), 'ether')} ETH </b>
                 </div>
             </div>
-            <div className="row" style={{"margin-top":"7%"}}>
-                <WalletTransactions account={account} web3={web3} balance={balance} onBalanceChange={() =>balanceChangeHandler()}></WalletTransactions>
+            <div className="row" style={{ "margin-top": "7%" }}>
+                <WalletTransactions account={account} web3={web3} balance={balance} onBalanceChange={() => balanceChangeHandler()}></WalletTransactions>
             </div>
-    </div>
+        </div>
     )
 
 }

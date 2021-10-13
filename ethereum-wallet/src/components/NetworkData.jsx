@@ -1,9 +1,9 @@
 
 
-const NetworkData = ({network}) => {
+const NetworkData = ({ network }) => {
 
-    return(
-        <div className="container-m" style={{margin:20}}>           
+    return (
+        <div className="container-m" style={{ margin: 20 }}>
             <div className="row">
                 <div className="col-6">
                     <h3>Newtowork Information</h3>
