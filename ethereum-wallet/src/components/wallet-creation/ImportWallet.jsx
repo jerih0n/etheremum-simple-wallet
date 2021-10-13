@@ -47,7 +47,7 @@ const ImportWallet = ({networkConfig}) => {
             //console.log("private key " + privateKey + "incrypted with " + `${password.password}`);           
             //const enctrypedPrivateKey = AES.encrypt(`${privateKey}`, `${password.password}`).toString();
             //console.log("enctrypedPrivateKey key" + enctrypedPrivateKey + "encrypted by " + `${password.password}`);
-            CookieHelper.setCoockie(Constants.PRIVATE_KEY_COCKIE_NAME,privateKey,new Date(Date.now()+100000000000000))
+            CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,privateKey,new Date(Date.now()+100000000000000))
 
             return history.push("/main")
         }

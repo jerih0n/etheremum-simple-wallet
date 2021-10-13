@@ -127,8 +127,7 @@ const WalletTransactions = ({account, web3, balance}) => {
                     <input type="input" class="form-control" onChange={(e) => {
                         setSendAmount(e.target.value);
                         setSendAmountInWei(web3.utils.toWei(e.target.value.toString(),'ether'))
-                    }
-                        } />
+                    }} />
                 </div>
                 <div className="mb-3">
                     <input type="submit" class="form-control" id="exampleFormControlInput1"/>

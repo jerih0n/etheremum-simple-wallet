@@ -8,11 +8,12 @@ import NetworkHelper from "../src/storage/NetworksHelper"
 import { Cookies } from 'react-cookie';
 import { useState, useEffect } from 'react'
 import NetworkData from "./components/NetworkData"
-import Constants from "./storage/Constants"
+import Constants from './storage/Constants'
 import WalletManager from "./components/wallet-controlls/WalletManager"
 import {BrowserRouter  as Router, Route, Switch, Redirect } from 'react-router-dom';
 import CreateWallet from './components/wallet-creation/CreateWallet';
 import WalletBasicInfo from './components/wallet-controlls/WalletBasicInfo';
+import CookieHelper from './helpers/CookieHelper';
 
 function App() {
 
@@ -24,11 +25,7 @@ function App() {
 
   useEffect(()=> {
     const defaultConfig =  NetworkHelper.getDefaultNetwork();
-    console.log(defaultConfig);
-    
     setConfig(defaultConfig);
-
-    console.log(defaultNetworkConfig);
   },[defaultNetworkConfig])
 
   const RenderRedirect =() => {
@@ -45,8 +42,8 @@ function App() {
     return  <Main networkConfig={defaultNetworkConfig} className="row"></Main>
   }
   useEffect(() => {
-    const coockieManager = new Cookies();
-    const privateKeyEncrypted = coockieManager.get(Constants.PRIVATE_KEY_COCKIE_NAME)
+    const privateKeyEncrypted = CookieHelper.getCoockie(Constants.PRIVATE_KEY_COOKIE_NAME)
+    console.log(privateKeyEncrypted);
     if(privateKeyEncrypted) {
       setPrivateKeyFromCoockie(privateKeyEncrypted);
       setIsPrivateKeyPresent(true);
@@ -74,7 +71,12 @@ function App() {
                 <ImportWallet networkConfig={defaultNetworkConfig} className="row"></ImportWallet>
             </Route>
             <Route path='/wallet-manager'>
-                
+              <WalletManager
+                url={defaultNetworkConfig.Url} 
+                encryptedPrivateKey={privateKey}
+                port={defaultNetworkConfig.Port}
+                className="row"
+                ></WalletManager>
             </Route>
             <Route path='/wallet-basic-info' component={WalletBasicInfo} className="row"></Route>
             <Route path="/">

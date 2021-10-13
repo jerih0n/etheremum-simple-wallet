@@ -36,7 +36,7 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
             console.log(error);
         }           
    }
-   
+
    const removeWallet = removeDataAsWell => {
         const dataAsWellDialog = removeDataAsWell ? " This action will removing all the thata as well!": "";
         const alertAnswer = window.confirm(`Are you sure you wan't to remove the wallet?${dataAsWellDialog}`);
@@ -45,20 +45,28 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
             if(removeDataAsWell) {
                 LocalStorageHelper.removeItemFromStorage(LocalStorageHelper.createLocalStorageKey(Constants.LOCAL_STORAGE_TRANSACTION_HISTORY,account.address));
             }
-            return history.push("/");
+            return history.push("/main");
         }
    }
 
    const renderOnAccountCreation = () => {
        if(account != null) {
            return(
-               <div className="container-fluid">
-                   <div className='row'>
-                        <button type="button" class="btn btn-danger" onClick={() => removeWallet(false)}>Delete Wallet</button>
-                        <button type="button" class="btn btn-danger" onClick={() => removeWallet(true)}>Delete Wallet and Data</button>
-                   </div>
-                   <WalletBasicInfo web3={web3} account={account}></WalletBasicInfo>
-               </div>
+            <div className="container">
+                <div className="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                <div className="col">
+                    <div className="p-3 border bg-light">
+                        <button type="button" className="btn btn-danger" onClick={() => removeWallet(false)}>Delete Wallet</button>
+                    </div>
+                </div>
+                <div className="col">
+                    <div className="p-3 border bg-light">
+                        <button type="button" className="btn btn-danger" onClick={() => removeWallet(true)}>Delete wallet with data</button>
+                    </div>
+                </div>
+                </div>
+                <WalletBasicInfo web3={web3} account={account}></WalletBasicInfo>
+          </div>
            )
        }
        return (
@@ -82,3 +90,5 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
 }
 
 export default WalletManager;
+
+
