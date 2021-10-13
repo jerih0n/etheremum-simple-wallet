@@ -9,6 +9,7 @@ import Constants from "../../storage/Constants";
 
 import CookieHelper from "../../helpers/CookieHelper";
 import LocalStorageHelper from "../../storage/LocalStorageHelper";
+import CryptographyHelper from "../../helpers/CryptographyHelper";
 
 const WalletManager = ({url,port,encryptedPrivateKey}) => {
 
@@ -28,7 +29,8 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
    const onPassowordSubmit = (event) => {
         event.preventDefault();
         try {
-            const createdAccount = new Wallet(encryptedPrivateKey);
+            const pkDecrypted = CryptographyHelper.dencryptPrivateKey(encryptedPrivateKey,password);
+            const createdAccount = new Wallet(pkDecrypted);
             setAccount(createdAccount);
         }catch(error) {
             console.log(error);

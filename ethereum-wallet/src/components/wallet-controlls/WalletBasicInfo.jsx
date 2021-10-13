@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react"
-import Web3 from "web3";
-import { ethers } from "ethers";
-import { Wallet } from "@ethersproject/wallet";
 import WalletTransactions from './WalletTransactions';
 
 const WalletBasicInfo = ({web3,account}) => {

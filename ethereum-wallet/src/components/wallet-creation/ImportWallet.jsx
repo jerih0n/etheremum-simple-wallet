@@ -6,6 +6,7 @@ import { Wallet } from '@ethersproject/wallet';
 import CookieHelper from "../../helpers/CookieHelper";
 import { useHistory } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
+import CryptographyHelper from '../../helpers/CryptographyHelper';
 const ImportWallet = ({networkConfig,fromMnemonic}) => {
     const history = useHistory();
 
@@ -38,7 +39,8 @@ const ImportWallet = ({networkConfig,fromMnemonic}) => {
         }else {
             privateKey = recoveFromPrivateKey();
         }
-        CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,privateKey,new Date(Date.now()+100000000000000))
+        const encryptedPK = CryptographyHelper.encryptPrivateKey(privateKey,password.password)
+        CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,encryptedPK,new Date(Date.now()+100000000000000))
         window.location.href='/'
 
     }

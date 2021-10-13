@@ -4,6 +4,8 @@ import CookieHelper from "../../helpers/CookieHelper";
 import Constants from "../../storage/Constants";
 
 import NewAccountData from './NewAccountData'
+import CryptographyHelper from "../../helpers/CryptographyHelper";
+
 const CreateWallet = ({networkConfig}) => {
 
     const onSubmit = (event) => {
@@ -13,11 +15,11 @@ const CreateWallet = ({networkConfig}) => {
             alert('Passwords do not match')
             return;
         }
-       const newWallet = ethers.Wallet.createRandom();
+       const newWallet = ethers.Wallet.createRandom();      
        setMnemonic(newWallet.mnemonic.phrase);
        setPrivateKey(newWallet.privateKey);
-       //add encryption here
-       CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,newWallet.privateKey);
+       const privateKeyEnc = CryptographyHelper.encryptPrivateKey(newWallet.privateKey,password);
+       CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,privateKeyEnc);
     }
 
     const renderAccountData = () => {

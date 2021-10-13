@@ -41,16 +41,14 @@ function App() {
   }
   useEffect(() => {
     const privateKeyEncrypted = CookieHelper.getCoockie(Constants.PRIVATE_KEY_COOKIE_NAME)
-    console.log("called on load  " + privateKeyEncrypted);
     if(privateKeyEncrypted) {
       setPrivateKeyFromCoockie(privateKeyEncrypted);
       setIsPrivateKeyPresent(true);
-      console.log("called oneces " + isPrivateKeyPresent)
       return;
     }
     console.log("called outside use effect " + isPrivateKeyPresent)
     setIsPrivateKeyPresent(false);
-  })
+  },[])
 
   return (
   <div className="container">          
