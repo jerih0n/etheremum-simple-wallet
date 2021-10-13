@@ -41,7 +41,7 @@ function App() {
   }
   useEffect(() => {
     const privateKeyEncrypted = CookieHelper.getCoockie(Constants.PRIVATE_KEY_COOKIE_NAME)
-    console.log(privateKeyEncrypted);
+    console.log("called on load  " + privateKeyEncrypted);
     if(privateKeyEncrypted) {
       setPrivateKeyFromCoockie(privateKeyEncrypted);
       setIsPrivateKeyPresent(true);

@@ -5,10 +5,7 @@ import { Wallet } from "@ethersproject/wallet";
 import WalletTransactions from './WalletTransactions';
 
 const WalletBasicInfo = ({web3,account}) => {
-    const a = () => {
-        const wallet = new Wallet();
-        wallet.getAddress()
-    }
+
     const[balance, setBalance] = useState(0);
     
     useEffect(() => {
@@ -16,9 +13,15 @@ const WalletBasicInfo = ({web3,account}) => {
          .then(result => {
             setBalance(result);
          });
-       },[balance])
+       },[])
 
-    
+    const balanceChangeHandler = () => {
+        web3.eth.getBalance(account.address)
+         .then(result => {
+            setBalance(result);
+         });
+    }
+
     return (
         <div className="container">
             <div className="row">
@@ -30,7 +33,7 @@ const WalletBasicInfo = ({web3,account}) => {
                 </div>
             </div>
             <div className="row" style={{"margin-top":"7%"}}>
-                <WalletTransactions account={account} web3={web3} balance={balance}></WalletTransactions>
+                <WalletTransactions account={account} web3={web3} balance={balance} onBalanceChange={() =>balanceChangeHandler()}></WalletTransactions>
             </div>
     </div>
     )

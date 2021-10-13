@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { Wallet } from '@ethersproject/wallet';
 import CookieHelper from "../../helpers/CookieHelper";
 import { useHistory } from 'react-router-dom';
-
+import { Redirect } from 'react-router-dom';
 const ImportWallet = ({networkConfig,fromMnemonic}) => {
     const history = useHistory();
 
@@ -39,7 +39,7 @@ const ImportWallet = ({networkConfig,fromMnemonic}) => {
             privateKey = recoveFromPrivateKey();
         }
         CookieHelper.setCoockie(Constants.PRIVATE_KEY_COOKIE_NAME,privateKey,new Date(Date.now()+100000000000000))
-        return history.push("/")
+        window.location.href='/'
 
     }
 
@@ -59,7 +59,7 @@ const ImportWallet = ({networkConfig,fromMnemonic}) => {
     const recoveFromPrivateKey = () => {
         if(!validatePassword(password.password, password.consfirmPassowrd)) {
             alert("passwords do not match");
-            return history.push("/");            
+            return <Redirect to='/'></Redirect>           
         }    
         let privateKey = recovery.toLowerCase();
         console.log(privateKey);

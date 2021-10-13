@@ -1,10 +1,11 @@
 
+import { id } from "@ethersproject/hash";
 import { useState, useEffect } from "react"
 import Constants from "../../storage/Constants"
 import LocalStorageHelper from "../../storage/LocalStorageHelper";
 
 
-const WalletTransactions = ({account, web3, balance}) => {
+const WalletTransactions = ({account, web3, balance, onBalanceChange}) => {
 
     const localStorageName = LocalStorageHelper.createLocalStorageKey(Constants.LOCAL_STORAGE_TRANSACTION_HISTORY,account.address)
 
@@ -14,7 +15,7 @@ const WalletTransactions = ({account, web3, balance}) => {
     const [transactionEstimatedGass, setEstimatedGassForTrnasaction] = useState(0);
     const [sendAmountInWei,setSendAmountInWei] = useState(null);
     const [allTransactions, setAllTransactions] = useState([]);
-
+    const [showHistory,setShowHistory] = useState();
     
 
     useEffect(() => {
@@ -33,6 +34,7 @@ const WalletTransactions = ({account, web3, balance}) => {
         }else {
            recordInLocalStrorage(sendAmountInWei,transactionHash,transactionEstimatedGass)
            setTransactionHash(transactionHash);
+           onBalanceChange();
         }
     }
    
@@ -63,7 +65,9 @@ const WalletTransactions = ({account, web3, balance}) => {
     }
 
     const renderTransactionHistory = () => {
-
+        if(!showHistory) {
+            return (<tbody></tbody>)
+        }
         const allTransactions = JSON.parse(LocalStorageHelper.getItemFromLocalStorage(localStorageName));
         if(allTransactions == null || allTransactions.length == 0) {
             return <tbody></tbody>
@@ -110,7 +114,7 @@ const WalletTransactions = ({account, web3, balance}) => {
     }
 
     return(
-        <div className="container-fluid">
+    <div className="container-fluid">
         <div className="row gx-5">
           <div className="col">
            <div className="p-3 border bg-light"> 
@@ -136,6 +140,12 @@ const WalletTransactions = ({account, web3, balance}) => {
            </div>
           </div>
         </div>
+        <div className="row x-5" style={{marginTop:"3%", marginBottom:"3%"}}>
+            <div className="col">
+                <button className="btn btn-info" onClick={() =>setShowHistory(!showHistory)}>{showHistory? 'Hide History' : 'Show History'}</button>
+            </div>
+            
+        </div>
         <div className="row">
             <table class="table">
             <thead>
@@ -150,7 +160,7 @@ const WalletTransactions = ({account, web3, balance}) => {
                 {renderTransactionHistory()}
             </table>
         </div>
-      </div>
+    </div>
     )
 }
 

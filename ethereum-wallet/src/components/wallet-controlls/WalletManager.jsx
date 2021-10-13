@@ -43,7 +43,7 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
             if(removeDataAsWell) {
                 LocalStorageHelper.removeItemFromStorage(LocalStorageHelper.createLocalStorageKey(Constants.LOCAL_STORAGE_TRANSACTION_HISTORY,account.address));
             }
-            return history.goBack();
+            window.location.href='/'
         }
    }
 
@@ -74,7 +74,7 @@ const WalletManager = ({url,port,encryptedPrivateKey}) => {
                     <input type="password" className="form-control" onChange={(e) => setPassword(e.target.value)}/>
                 </div>
                 <div className="row">
-                    <input type="submit" value="Submit" className="btn btn-primary" style={{margin:20}}></input>  
+                    <input type="submit" value="Submit" className="btn btn-primary"></input>  
                 </div>
             </form>
        )
