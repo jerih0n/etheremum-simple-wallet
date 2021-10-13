@@ -1,15 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState, useEffect } from 'react'
 import Cookies from 'universal-cookie';
-import Constants from '../storage/Constants';
+import Constants from '../../storage/Constants';
 import { AES } from 'crypto-js';
 import Web3 from 'web3';
-import UrlBuilder from '../helpers/UrlBuilder';
+import UrlBuilder from '../../helpers/UrlBuilder';
 import { ethers } from 'ethers';
 import { Wallet } from '@ethersproject/wallet';
-import CookieHelper from "../helpers/CookieHelper";
+import CookieHelper from "../../helpers/CookieHelper";
 import { useHistory } from 'react-router-dom';
-import Main from "../components/Main"
+import Main from "../Main"
 
 const ImportWallet = ({networkConfig}) => {
     const history = useHistory();

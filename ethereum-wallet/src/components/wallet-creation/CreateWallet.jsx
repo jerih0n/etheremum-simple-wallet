@@ -2,7 +2,7 @@
 
 const CreateWallet = ({networkConfig}) => {
 
-    return(<div>fAAF</div>)
+    return <div>afasf</div>
 }
 
 export default CreateWallet;

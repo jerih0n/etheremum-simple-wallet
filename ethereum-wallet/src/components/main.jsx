@@ -1,12 +1,14 @@
-import { Route, Router, Switch } from "react-router"
-import ImportWallet from "./ImportWallet"
+
 const Main = ({networkConfig}) => {
 
     return(
         <div className="container-fluid">
             <div>
                 <div className="list-group" style={{margin:10}}>
-                    <a href="/import-wallet" className="list-group-item list-group-item-action active">Import existing wallet</a>
+                    <a href="/import-wallet" className="list-group-item list-group-item-action active">Import existing wallet from recovery phrase</a>
+                </div>
+                <div className="list-group" style={{margin:10}}>
+                    <a href="/import-wallet" className="list-group-item list-group-item-action active">Import existing wallet from private key</a>
                 </div>
             </div>
             <div>

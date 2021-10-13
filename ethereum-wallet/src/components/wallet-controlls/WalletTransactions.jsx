@@ -3,11 +3,12 @@ import { useState, useEffect } from "react"
 import { ethers } from "ethers";
 import { Wallet } from "@ethersproject/wallet";
 import Constants from "../../storage/Constants"
+import LocalStorageHelper from "../../storage/LocalStorageHelper";
 
 
 const WalletTransactions = ({account, web3, balance}) => {
 
-    const localStorageHistoryName = Constants.LOCAL_STORAGE_TRANSACTION_HISTORY+`${account.address}`;
+    const localStorageName = LocalStorageHelper.createLocalStorageKey(Constants.LOCAL_STORAGE_TRANSACTION_HISTORY,account.address)
 
     const [recieveAddress, setRecieveAddress] = useState(null);
     const [sendAmount, setSendAmount] = useState(null);
@@ -19,8 +20,13 @@ const WalletTransactions = ({account, web3, balance}) => {
     
 
     useEffect(() => {
-        const allTransactions = JSON.parse(localStorage.getItem(localStorageHistoryName));
+        const allTransactions = 
+        JSON.parse(
+            LocalStorageHelper
+                .getItemFromLocalStorage(localStorageName));
+
         setAllTransactions(allTransactions);
+
     },[transactionHash])
 
     const transactionSendCallback = (err, transactionHash) => {
@@ -33,8 +39,8 @@ const WalletTransactions = ({account, web3, balance}) => {
     }
 
     const recordInLocalStrorage = (sendAmountInWei,transactionHash,transactionEstimatedGass) => {
-        if(localStorage.getItem(localStorageHistoryName) == null) {
-            localStorage.setItem(localStorageHistoryName,JSON.stringify([]))
+        if(LocalStorageHelper.getItemFromLocalStorage(localStorageName) == null) {
+            LocalStorageHelper.addToLocalStorage(localStorageName,[]);
         }
 
         let newTransactionRecord = {
@@ -44,11 +50,10 @@ const WalletTransactions = ({account, web3, balance}) => {
             transactionHash: transactionHash,
             gass: transactionEstimatedGass
         };
-        console.log(newTransactionRecord)
 
-        let currentData = JSON.parse(localStorage.getItem(localStorageHistoryName));
+        let currentData = JSON.parse(LocalStorageHelper.getItemFromLocalStorage(localStorageName));
         currentData.push(newTransactionRecord);
-        localStorage.setItem(localStorageHistoryName,JSON.stringify(currentData));      
+        LocalStorageHelper.addToLocalStorage(localStorageName, currentData)    
     }
 
     const gasEstimationCallback = (error, gass) => {
@@ -61,15 +66,16 @@ const WalletTransactions = ({account, web3, balance}) => {
 
     const renderTransactionHistory = () => {
 
-        const allTransactions = JSON.parse(localStorage.getItem(localStorageHistoryName));
+        const allTransactions = JSON.parse(LocalStorageHelper.getItemFromLocalStorage(localStorageName));
+        if(allTransactions == null || allTransactions.length == 0) {
+            return <tbody></tbody>
+        }
         const transactions = allTransactions.map((x) => 
         <tr key={x.transactionHash}>
             <td>{x.from}</td>
             <td>{x.to}</td>
-            <td>{x.amountInWei}</td>
-            <td>{web3.utils.fromWei(x.amountInWei.toString(),'ether')}</td>
-            <td>{x.gass}</td>
-            <td>{web3.utils.fromWei(x.gass.toString(),'ether')}</td>
+            <td>{web3.utils.fromWei(x.amountInWei.toString(),'ether')} ETH</td>
+            <td>{web3.utils.fromWei(x.gass.toString(),'ether')} ETH</td>
             <td>{x.transactionHash}</td>
         </tr>)
 
@@ -114,11 +120,11 @@ const WalletTransactions = ({account, web3, balance}) => {
             <form onSubmit={onTransactionSubmit}>
                 <div className="mb-3">
                     <label htmlFor="exampleFormControlInput1" className="form-label">Address</label>
-                    <input type="input" className="form-control" id="exampleFormControlInput1" placeholder="0xAddress" onChange={(e) => setRecieveAddress(e.target.value)}/>
+                    <input type="input" className="form-control" placeholder="0xAddress" onChange={(e) => setRecieveAddress(e.target.value)}/>
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleFormControlInput1" className="form-label">Amount in EHT</label>
-                    <input type="number"  step="any" class="form-control" id="exampleFormControlInput1" onChange={(e) => {
+                    <input type="input" class="form-control" onChange={(e) => {
                         setSendAmount(e.target.value);
                         setSendAmountInWei(web3.utils.toWei(e.target.value.toString(),'ether'))
                     }
@@ -137,10 +143,8 @@ const WalletTransactions = ({account, web3, balance}) => {
                 <tr>
                 <th scope="col">Transaction From</th>
                 <th scope="col">Transaction To</th>
-                <th scope="col">Amount in Wei</th>
-                <th scope="col">Amount in ETH</th>
-                <th scope="col">Gass in Wei</th>
-                <th scope="col">Gass in ETH</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Gass</th>
                 <th scope="col">Transaction Hash</th>
                 </tr>
             </thead>

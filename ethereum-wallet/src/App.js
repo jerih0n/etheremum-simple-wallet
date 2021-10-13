@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import Main from "./components/Main"
-import ImportWallet from "./components/ImportWallet"
+import ImportWallet from "./components/wallet-creation/ImportWallet"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useHistory } from 'react-router-dom';
 import NetworkHelper from "../src/storage/NetworksHelper"
@@ -9,9 +9,9 @@ import { Cookies } from 'react-cookie';
 import { useState, useEffect } from 'react'
 import NetworkData from "./components/NetworkData"
 import Constants from "./storage/Constants"
-import WalletManager from "./components/WalletManager"
+import WalletManager from "./components/wallet-controlls/WalletManager"
 import {BrowserRouter  as Router, Route, Switch, Redirect } from 'react-router-dom';
-import CreateWallet from './components/CreateWallet';
+import CreateWallet from './components/wallet-creation/CreateWallet';
 import WalletBasicInfo from './components/wallet-controlls/WalletBasicInfo';
 
 function App() {
@@ -39,9 +39,10 @@ function App() {
       url={defaultNetworkConfig.Url} 
       encryptedPrivateKey={privateKey}
       port={defaultNetworkConfig.Port}
+      className="row"
 ></WalletManager>
     }
-    return  <Main networkConfig={defaultNetworkConfig}></Main>
+    return  <Main networkConfig={defaultNetworkConfig} className="row"></Main>
   }
   useEffect(() => {
     const coockieManager = new Cookies();
@@ -58,7 +59,7 @@ function App() {
 
   return (
   <div className="container">          
-      <div className="container-fluid">
+      <div className="row">
         <div style={{margin:50}}>
           This is simple ethereum wallet. For Deloveloping Purposes only. Please do not use it with main ethereum net
           Please Chose an Option
@@ -67,15 +68,15 @@ function App() {
       <Router history={history}>
           <Switch>         
             <Route path="/create-wallet">
-                <CreateWallet networkConfig={defaultNetworkConfig} ></CreateWallet>
+                <CreateWallet networkConfig={defaultNetworkConfig} className="row"></CreateWallet>
             </Route>
             <Route path="/import-wallet">
-                <ImportWallet networkConfig={defaultNetworkConfig}></ImportWallet>
+                <ImportWallet networkConfig={defaultNetworkConfig} className="row"></ImportWallet>
             </Route>
             <Route path='/wallet-manager'>
                 
             </Route>
-            <Route path='/wallet-basic-info' component={WalletBasicInfo}></Route>
+            <Route path='/wallet-basic-info' component={WalletBasicInfo} className="row"></Route>
             <Route path="/">
                 {RenderRedirect()}
             </Route>
