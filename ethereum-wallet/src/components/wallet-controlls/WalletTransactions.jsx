@@ -1,6 +1,7 @@
 
-import { id } from "@ethersproject/hash";
+import ConfirmTransactionPopup from '../Popups/ConfirmTransactionPopup'
 import { useState, useEffect } from "react"
+import Popup from "reactjs-popup";
 import Constants from "../../storage/Constants"
 import LocalStorageHelper from "../../storage/LocalStorageHelper";
 
@@ -37,7 +38,40 @@ const WalletTransactions = ({account, web3, balance, onBalanceChange}) => {
            onBalanceChange();
         }
     }
-   
+
+    const onTransactionConfirmation = (isConfirmed) => {
+        document.getElementById('popUp').remove();
+        if(isConfirmed) {
+            if(!validateEthAddress()) {
+                alert("Invalid Ehtereum Address");
+                return;
+            }
+            
+            if(web3.utils.fromWei(balance,'ether') < sendAmount) {
+                alert("insufficient balance")
+                return;
+            }
+    
+            const weiTransactionAmount = web3.utils.toWei(sendAmount,'ether');
+    
+            setSendAmountInWei(weiTransactionAmount);
+    
+            const transactionData = {
+                from: account.address,
+                to: recieveAddress,
+                value: weiTransactionAmount
+            };
+    
+            web3.eth.estimateGas(transactionData,gasEstimationCallback);
+    
+            web3.eth.sendTransaction({
+                from: account.address,
+                to: recieveAddress,
+                value: weiTransactionAmount,
+            } ,transactionSendCallback)
+        }
+    }
+
     const recordInLocalStrorage = (sendAmountInWei,transactionHash,transactionEstimatedGass) => {
         if(LocalStorageHelper.getItemFromLocalStorage(localStorageName) == null) {
             LocalStorageHelper.addToLocalStorage(localStorageName,[]);
@@ -85,13 +119,23 @@ const WalletTransactions = ({account, web3, balance, onBalanceChange}) => {
             {transactions}
         </tbody>
     }
-    const onTransactionSubmit = (event) => {
-        event.preventDefault();
-        // we are assuming that sendAmount is in ethers
-        //add dropdown list and handles it 
+    const validateEthAddress = () =>  {
+        if (!/^(0x)?[0-9a-f]{40}$/i.test(recieveAddress)) {
+            // check if it has the basic requirements of an address
+            return false;
+        }
+        return true;
+    }
+
+    const executeTransaction = () => {
+        if(!validateEthAddress()) {
+            alert("Invalid Ehtereum Address");
+            return;
+        }
         
         if(web3.utils.fromWei(balance,'ether') < sendAmount) {
             alert("insufficient balance")
+            return;
         }
 
         const weiTransactionAmount = web3.utils.toWei(sendAmount,'ether');
@@ -111,6 +155,9 @@ const WalletTransactions = ({account, web3, balance, onBalanceChange}) => {
             to: recieveAddress,
             value: weiTransactionAmount,
         } ,transactionSendCallback)
+    }
+    const onTransactionSubmit = (event) => {
+        event.preventDefault();
     }
 
     return(
@@ -134,7 +181,13 @@ const WalletTransactions = ({account, web3, balance, onBalanceChange}) => {
                     }} />
                 </div>
                 <div className="mb-3">
-                    <input type="submit" class="form-control" id="exampleFormControlInput1"/>
+                    <Popup trigger={<input type="submit" class="form-control btn btn btn-warning" value='Send Transaction'/>} position='top center'>
+                        <ConfirmTransactionPopup address={recieveAddress} 
+                                                 amount={sendAmount} 
+                                                 gassPrice={web3.utils.fromWei(transactionEstimatedGass.toString(),'ether')} 
+                                                 confirmationCallback={onTransactionConfirmation}></ConfirmTransactionPopup>
+                    </Popup>
+                    
                 </div>
             </form>
            </div>

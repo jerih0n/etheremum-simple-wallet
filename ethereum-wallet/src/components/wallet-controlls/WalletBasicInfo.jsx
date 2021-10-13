@@ -23,8 +23,8 @@ const WalletBasicInfo = ({web3,account}) => {
     }
 
     return (
-        <div className="container">
-            <div className="row">
+        <div className="container" style={{marginTop:"3%"}}>
+            <div className="row" style={{fontSize:"20px;"}}>
                 <div className="col">
                     Address: <b>{account.address}</b>
                 </div>
