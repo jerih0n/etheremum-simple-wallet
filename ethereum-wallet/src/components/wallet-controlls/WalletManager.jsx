@@ -10,6 +10,8 @@ import Constants from "../../storage/Constants";
 import CookieHelper from "../../helpers/CookieHelper";
 import LocalStorageHelper from "../../storage/LocalStorageHelper";
 import CryptographyHelper from "../../helpers/CryptographyHelper";
+import Popup from "reactjs-popup";
+import AddTokenPopup from "../Popups/AddTokenPopup";
 
 const WalletManager = ({ url, port, encryptedPrivateKey }) => {
 
@@ -48,7 +50,10 @@ const WalletManager = ({ url, port, encryptedPrivateKey }) => {
             window.location.href = '/'
         }
     }
-
+    const onTokenAddPopupResponse = () => {
+        console.log('button pressed!')
+        document.getElementById('addTokenPopup').remove();
+    }
     const renderOnAccountCreation = () => {
         if (account != null) {
             return (
@@ -65,6 +70,9 @@ const WalletManager = ({ url, port, encryptedPrivateKey }) => {
                             </div>
                         </div>
                     </div>
+                    <Popup trigger={<button className='btn btn-primary' style={{borderRadius:"10px;",}} >Add Token</button>}>
+                        <AddTokenPopup url={UrlBuilder.builProviderUrl(url, port)} accountAddress={account.address} callBack={onTokenAddPopupResponse}></AddTokenPopup>
+                    </Popup>
                     <WalletBasicInfo web3={web3} account={account}></WalletBasicInfo>
                 </div>
             )

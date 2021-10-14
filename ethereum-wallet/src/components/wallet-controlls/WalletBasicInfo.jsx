@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react"
+import Popup from "reactjs-popup";
+import AddTokenPopup from "../Popups/AddTokenPopup";
 import WalletTransactions from './WalletTransactions';
 
 const WalletBasicInfo = ({ web3, account }) => {
