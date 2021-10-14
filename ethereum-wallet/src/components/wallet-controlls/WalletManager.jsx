@@ -12,6 +12,7 @@ import LocalStorageHelper from "../../storage/LocalStorageHelper";
 import CryptographyHelper from "../../helpers/CryptographyHelper";
 import Popup from "reactjs-popup";
 import AddTokenPopup from "../Popups/AddTokenPopup";
+import TokensManager from "./Tokens/TokensManager";
 
 const WalletManager = ({ url, port, encryptedPrivateKey }) => {
 
@@ -70,10 +71,8 @@ const WalletManager = ({ url, port, encryptedPrivateKey }) => {
                             </div>
                         </div>
                     </div>
-                    <Popup trigger={<button className='btn btn-primary' style={{borderRadius:"10px;",}} >Add Token</button>}>
-                        <AddTokenPopup url={UrlBuilder.builProviderUrl(url, port)} accountAddress={account.address} callBack={onTokenAddPopupResponse}></AddTokenPopup>
-                    </Popup>
                     <WalletBasicInfo web3={web3} account={account}></WalletBasicInfo>
+                    <TokensManager account={account} url={UrlBuilder.builProviderUrl(url, port)}></TokensManager>
                 </div>
             )
         }

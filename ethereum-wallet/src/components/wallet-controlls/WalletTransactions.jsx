@@ -165,7 +165,7 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
             <div className="row gx-5">
                 <div className="col">
                     <div className="p-3 border bg-light">
-                        <h3>Send amount to address</h3>
+                        <h3>Send Ethereum to address</h3>
                         <form onSubmit={onTransactionSubmit}>
                             <div className="mb-3">
                                 <label htmlFor="exampleFormControlInput1" className="form-label">Address</label>
