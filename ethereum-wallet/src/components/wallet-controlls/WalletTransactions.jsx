@@ -29,6 +29,12 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
 
     }, [transactionHash])
 
+    useEffect(() => {
+        web3.eth.getGasPrice().then(g => {
+            setEstimatedGassForTrnasaction(web3.utils.fromWei(g.toString(), 'ether'));
+        }).catch(e => console.log(e));
+    },[])
+
     const transactionSendCallback = (err, transactionHash) => {
         if (err) {
             console.log(err);
@@ -62,8 +68,6 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
                 value: weiTransactionAmount
             };
 
-            web3.eth.estimateGas(transactionData, gasEstimationCallback);
-
             web3.eth.sendTransaction({
                 from: account.address,
                 to: recieveAddress,
@@ -71,7 +75,6 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
             }, transactionSendCallback)
         }
     }
-
     const recordInLocalStrorage = (sendAmountInWei, transactionHash, transactionEstimatedGass) => {
         if (LocalStorageHelper.getItemFromLocalStorage(localStorageName) == null) {
             LocalStorageHelper.addToLocalStorage(localStorageName, []);
@@ -88,14 +91,6 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
         let currentData = JSON.parse(LocalStorageHelper.getItemFromLocalStorage(localStorageName));
         currentData.push(newTransactionRecord);
         LocalStorageHelper.addToLocalStorage(localStorageName, currentData)
-    }
-
-    const gasEstimationCallback = (error, gass) => {
-        if (error) {
-            console.log(error);
-        } else {
-            setEstimatedGassForTrnasaction(gass);
-        }
     }
 
     const renderTransactionHistory = () => {
@@ -127,35 +122,7 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
         return true;
     }
 
-    const executeTransaction = () => {
-        if (!validateEthAddress()) {
-            alert("Invalid Ehtereum Address");
-            return;
-        }
-
-        if (web3.utils.fromWei(balance, 'ether') < sendAmount) {
-            alert("insufficient balance")
-            return;
-        }
-
-        const weiTransactionAmount = web3.utils.toWei(sendAmount, 'ether');
-
-        setSendAmountInWei(weiTransactionAmount);
-
-        const transactionData = {
-            from: account.address,
-            to: recieveAddress,
-            value: weiTransactionAmount
-        };
-
-        web3.eth.estimateGas(transactionData, gasEstimationCallback);
-
-        web3.eth.sendTransaction({
-            from: account.address,
-            to: recieveAddress,
-            value: weiTransactionAmount,
-        }, transactionSendCallback)
-    }
+    
     const onTransactionSubmit = (event) => {
         event.preventDefault();
     }
@@ -184,8 +151,9 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
                                 <Popup trigger={<input type="submit" class="form-control btn btn btn-warning" value='Send Transaction' />} position='top center'>
                                     <ConfirmTransactionPopup address={recieveAddress}
                                         amount={sendAmount}
-                                        gassPrice={web3.utils.fromWei(transactionEstimatedGass.toString(), 'ether')}
-                                        confirmationCallback={onTransactionConfirmation}></ConfirmTransactionPopup>
+                                        gassPrice={transactionEstimatedGass}
+                                        confirmationCallback={onTransactionConfirmation}
+                                        symbol={'ETH'}></ConfirmTransactionPopup>
                                 </Popup>
 
                             </div>

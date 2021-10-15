@@ -2,6 +2,7 @@
 import Web3 from "web3";
 import UrlBuilder from '../helpers/UrlBuilder'
 import SmartContractABIStorage from '../storage/SmartContractABIStorage'
+
 class ERC20TokenService {
 
     web3;
@@ -25,9 +26,36 @@ class ERC20TokenService {
 
     getName() {
 
-        return this.contract.methods.name().call()
+        return this.contract.methods.name().call();
     }
 
+    getDecimals(callerAddress) {
+        return this.contract.methods.decimals().call();
+    }
+
+    getTotalSupply(callerAddress) {
+        return this.contract.methods.totalSupply().call();
+    }
+
+    getBalance(callerAddress) {
+        return this.contract.methods.balanceOf(callerAddress).call()
+    }
+
+    transfer(toAddress, amount, callerAddress) {
+        return this.contract.methods.transfer(toAddress, amount).send({from: callerAddress});
+    }
+
+    transferFrom(fromAddress, toAddress, amount, callerAddress) {
+        return this.contract.methods.transferFrom(fromAddress, toAddress, amount).send({from: callerAddress});
+    }
+
+    approve(spender, value, callerAddress) {
+        return this.contract.methods.approve(spender, value).send({from: callerAddress});
+    }
+
+    allowance(owner, spender, callerAddress) {
+        return this.contract.methods.allowance(owner, spender).send({from: callerAddress})
+    }
 }
 
 export default ERC20TokenService;

@@ -1,10 +1,6 @@
 
-import { useHistory } from "react-router"
-const ConfirmTransactionPopup = ({address, amount, gassPrice, confirmationCallback}) => {
+const ConfirmTransactionPopup = ({address, amount, gassPrice, symbol, confirmationCallback}) => {
 
-    const history = useHistory();
-
-    
     return(
         <div id='popUp'>
             <div className="modal-dialog">
@@ -16,7 +12,7 @@ const ConfirmTransactionPopup = ({address, amount, gassPrice, confirmationCallba
                 <div className="modal-body" style={{fontSize:"18px"}}>
                     <p>Please confirm the following transaction</p>
                     <p>Recieving address: <b>{address}</b></p>
-                    <p>Amount to send: <b>{amount} ETH </b></p>
+                    <p>Amount to send: <b>{amount} {symbol} </b></p>
                     <p>Estimated gass price: <b>{gassPrice} ETH </b></p>
                 </div>
                 <div className="modal-footer">
