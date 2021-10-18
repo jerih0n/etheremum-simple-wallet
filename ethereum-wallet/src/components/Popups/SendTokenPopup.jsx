@@ -4,12 +4,32 @@ import Popup from "reactjs-popup";
 import ConfirmTransactionPopup from '../Popups/ConfirmTransactionPopup'
 import ERC20TokenService from "../../services/ERC20TokenService";
 import Web3 from "web3";
+import LocalStorageHelper from "../../storage/LocalStorageHelper";
+import Constants from "../../storage/Constants";
 
 const SendTokenPopup = ({account, token, decimals, url, balance, sendTokenCallback}) => {
-
+    const localStorageName = LocalStorageHelper.createLocalStorageKey(Constants.LOCAL_STORAGE_TRANSACTION_HISTORY, account.address)
     const erc20TokenService = new ERC20TokenService(url, token.address)
     const web3 = new Web3(new Web3.providers.HttpProvider(url));
 
+    const recordInLocalStrorage = (amount,transactionHash, transactionEstimatedGass, symbol) => {
+        if (LocalStorageHelper.getItemFromLocalStorage(localStorageName) == null) {
+            LocalStorageHelper.addToLocalStorage(localStorageName, []);
+        }
+
+        let newTransactionRecord = {
+            from: account.address,
+            to: recieveAddress,
+            amount: amount,
+            transactionHash: transactionHash,
+            gass: transactionEstimatedGass,
+            symbol:symbol
+        };
+
+        let currentData = JSON.parse(LocalStorageHelper.getItemFromLocalStorage(localStorageName));
+        currentData.push(newTransactionRecord);
+        LocalStorageHelper.addToLocalStorage(localStorageName, currentData)
+    }
     const onTransactionConfirmation = (event) => {
         event.preventDefault();
         if(!EthereumValidator.isValidAddress(recieveAddress)) {
@@ -27,10 +47,9 @@ const SendTokenPopup = ({account, token, decimals, url, balance, sendTokenCallba
         .then(success => {
             console.log('resposne is :')
             console.log(success);
-            if(success) {
-                //record new transaction History
+            if(success && success.status == true) {
+                recordInLocalStrorage(amount,success.transactionHash,gassPrice, token.symbol);
                 sendTokenCallback(true);
-                return;
             }     
         }).catch(e => console.log(e));
         

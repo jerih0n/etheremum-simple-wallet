@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 import Popup from "reactjs-popup";
 import ERC20TokenService from "../../../services/ERC20TokenService"
 import SendTokenPopup from "../../Popups/SendTokenPopup";
-
+import LocalStorageHelper from "../../../storage/LocalStorageHelper";
 
 const Token = ({ account, token, url }) => {
 
@@ -13,6 +13,9 @@ const Token = ({ account, token, url }) => {
         document.getElementById(id).remove();
     }
 
+    const onTokenHistoryClose = () => {
+        document.getElementById('popup-history').remove();
+    }
     useCallback(() => {
         erc20TokenService.getDecimals(account.address)
         .then(d => {
@@ -43,10 +46,6 @@ const Token = ({ account, token, url }) => {
                 <Popup position='top center' trigger={ <button className='btn btn-primary' style={{ borderRadius: "15px" }} id="pop-up-send">Send</button>}> 
                     <SendTokenPopup account={account} token={token} decimals={decimals} sendTokenCallback={onSendTokenResponse}/>
                 </Popup>
-               
-            </td>
-            <td>
-                <button className='btn btn-info' style={{ borderRadius: "15px" }} >History</button>
             </td>
         </tr>
     )

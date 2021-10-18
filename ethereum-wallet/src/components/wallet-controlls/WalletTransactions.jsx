@@ -39,7 +39,7 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
         if (err) {
             console.log(err);
         } else {
-            recordInLocalStrorage(sendAmountInWei, transactionHash, transactionEstimatedGass)
+            recordInLocalStrorage(sendAmount, transactionHash, transactionEstimatedGass)
             setTransactionHash(transactionHash);
             onBalanceChange();
         }
@@ -62,12 +62,6 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
 
             setSendAmountInWei(weiTransactionAmount);
 
-            const transactionData = {
-                from: account.address,
-                to: recieveAddress,
-                value: weiTransactionAmount
-            };
-
             web3.eth.sendTransaction({
                 from: account.address,
                 to: recieveAddress,
@@ -75,7 +69,7 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
             }, transactionSendCallback)
         }
     }
-    const recordInLocalStrorage = (sendAmountInWei, transactionHash, transactionEstimatedGass) => {
+    const recordInLocalStrorage = (amount,transactionHash, transactionEstimatedGass) => {
         if (LocalStorageHelper.getItemFromLocalStorage(localStorageName) == null) {
             LocalStorageHelper.addToLocalStorage(localStorageName, []);
         }
@@ -83,9 +77,10 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
         let newTransactionRecord = {
             from: account.address,
             to: recieveAddress,
-            amountInWei: sendAmountInWei,
+            amount: amount,
             transactionHash: transactionHash,
-            gass: transactionEstimatedGass
+            gass: transactionEstimatedGass,
+            symbol:'ETH'
         };
 
         let currentData = JSON.parse(LocalStorageHelper.getItemFromLocalStorage(localStorageName));
@@ -105,8 +100,8 @@ const WalletTransactions = ({ account, web3, balance, onBalanceChange }) => {
             <tr key={x.transactionHash}>
                 <td>{x.from}</td>
                 <td>{x.to}</td>
-                <td>{web3.utils.fromWei(x.amountInWei.toString(), 'ether')} ETH</td>
-                <td>{web3.utils.fromWei(x.gass.toString(), 'ether')} ETH</td>
+                <td>{x.amount} {x.symbol}</td>
+                <td>{x.gass} ETH</td>
                 <td>{x.transactionHash}</td>
             </tr>)
 
