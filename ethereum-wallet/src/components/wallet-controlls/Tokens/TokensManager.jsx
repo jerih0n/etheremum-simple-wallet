@@ -33,7 +33,7 @@ const TokensManager = ({ account, url }) => {
             <div className="row">
                 <div className="row">
                     <div className="row">
-                        <h5 style={{ textAlign: "center" }}>ERC20 Tokens</h5>
+                        <h5 style={{ textAlign: "center" }}>Tokens</h5>
                     </div>
                     <table className="table-info">
                         <thead>
